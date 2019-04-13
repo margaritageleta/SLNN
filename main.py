@@ -81,7 +81,7 @@ def gen_data(seed, train_size, num_target, tr_freq=0.5, noise_freq=0):
     tr_p = np.random.permutation(train_size)
     te_p = np.random.permutation(train_size*10)
 
-    return train[tr_p], test[te_p], y_tr[tr_p], y_te[te_p]
+    return train[tr_p], test[te_p], y_tr[tr_p, None], y_te[te_p, None]
 
 
 # -- SLNN --
@@ -90,13 +90,17 @@ def sigmoid(x):
     return 1 / (1 + np.exp(-x))
 
 
-def neuralnet(X, w):
+def y(X, w):
     """Evaluates a SLNN with weigths `w` """
 
     return sigmoid((sigmoid(X) @ w.T))
 
 
-# -- Loss functions --
+# -- Objective functions --
 
-def loss(w, X, y):
-    return sum((neuralnet(X, w) - y)**2)
+def loss(w, X, ytr, p=0):
+    return np.sum((y(X, w) - ytr)**2) + p/2 * np.sum(w**2)
+
+
+def g_loss(w, X, ytr, p=0):
+    return 2*((y(X, w) - ytr) * y(X, w) * (1 - y(X, w))).T @ sigmoid(X) + p*w
