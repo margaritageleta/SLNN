@@ -41,7 +41,7 @@ def add_noise(number, noise_freq):
     of the pixels modified.
     """
 
-    n_pixels = round(noise_freq * len(number))
+    n_pixels = int(np.ceil(noise_freq * len(number)))
     swap = np.random.randint(0, 35, n_pixels)
     num = number.copy()
     num[swap] = (num[swap] + 1) % 2
@@ -63,7 +63,7 @@ def gen_data(seed, train_size, num_target, tr_freq=0.5, noise_freq=0):
     y_te = np.empty(train_size*10)
 
     # Train data
-    nrows_target = round(max(0.1*len(num_target), tr_freq) * train_size)
+    nrows_target = int(np.ceil(max(0.1*len(num_target), tr_freq) * train_size))
     for i in range(nrows_target):
         train[i] = add_noise(nums[num_target[i % len(num_target)]], noise_freq)
         y_tr[i] = num_target[i % len(num_target)]
