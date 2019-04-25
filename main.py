@@ -93,10 +93,6 @@ def y(X, w):
 
     return sigmoid((sigmoid(X) @ w.T))
 
-#def g_y(X, w):
-   # return y(X, w) * (1 - y(X, w))).T @ sigmoid(X)
-
-
 # -- Objective functions --
 
 def loss(w, X, ytr, p=0):
@@ -104,4 +100,47 @@ def loss(w, X, ytr, p=0):
 
 
 def g_loss(w, X, ytr, p=0):
-    return 2*((y(X, w) - ytr) * y(X, w) * (1 - y(X, w))).T @ sigmoid(X) + p*w
+    return (2 * sigmoid(X) * ((y(X, w) - ytr) * y(X, w) * (1 - y(X, w))) + p*w).sum(axis=0)
+
+# -- Optimization --
+
+"""
+ BLS params:
+ ----------
+         kmaxBLS = 30, 
+         epsilonBLS = 1.0e-03, 
+         c1 = 0.01, 
+         c2 = 0.45
+         
+ optimizer:
+ ---------
+         Steepest descent (GM)
+         Conjugate Gradient method (CGM)
+         Quasi-Newton BFGS
+""" 
+
+def nnet(Xtr, Ytr,lambda = 0.00, epsilon = 1.0e-06, kmax = 500, BLS_params, optimizer):
+    # init rand weights
+    w = rand_weights
+    
+    if optimizer == "GM": # Steepest descent
+        objective_func = loss(w, Xtr, Ytr, p = lambda)
+        GM(x, f, , BLS_params, eps = epsilon, kmax = kmax)
+        return 0
+    ##
+    elif optimizer == "CGM": # Conjugate Gradient method
+        
+        return 1
+    ##
+    elif optimizer == "BFGS": # Quasi-Newton BFGS
+        
+        return 2
+    ##
+    else:
+        print("Invalid optimizer.")
+        
+    
+
+
+
+
