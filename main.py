@@ -101,11 +101,13 @@ def y(X, w):
 
 
 def loss(w, X, ytr, p=0):
-    return np.sum((y(X, w) - ytr)**2) + p/2 * np.sum(w**2)
+    #return np.sum((y(X, w) - ytr)**2) + p/2 * np.sum(w**2)
+    return np.array([np.linalg.norm(y(X, w) - ytr)**2 + p/2 * np.linalg.norm(w)**2])
 
 
 def g_loss(w, X, ytr, p=0):
-    return np.squeeze(2 * sigmoid(X.T) @ ((y(X, w) - ytr) * y(X, w) * (1 - y(X, w))) + p*w.T)
+    return (2 * sigmoid(X) * ((y(X, w) - ytr) * y(X, w) * (1 - y(X, w))) + p*w).sum(axis=0)
+    #return np.squeeze(2 * sigmoid(X.T) @ ((y(X, w) - ytr) * y(X, w) * (1 - y(X, w))) + p*w.T)
 
 # -- Optimization --
 
