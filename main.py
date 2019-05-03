@@ -55,7 +55,7 @@ def gen_data(seed, train_size, num_target, tr_freq, noise_freq):
     either `num_target` or the full set of digits, and
     then selected uniformly.
     """
-    
+
     train = np.empty((train_size, 35))
     test = np.empty((train_size*10, 35))
     y_tr = np.empty(train_size)
@@ -65,16 +65,17 @@ def gen_data(seed, train_size, num_target, tr_freq, noise_freq):
     nrows_target = int(np.ceil(max(0.1*len(num_target), tr_freq) * train_size))
     for i in range(nrows_target):
         train[i] = add_noise(nums[num_target[i % len(num_target)]], noise_freq)
-        y_tr[i] = num_target[i % len(num_target)]
+        y_tr[i] = 1
 
+    not_target = [i for i in range(10) if i not in num_target]
     for i in range(nrows_target, train_size):
-        train[i] = add_noise(nums[i % len(nums)], noise_freq)
-        y_tr[i] = i % len(nums)
+        train[i] = add_noise(nums[not_target[i % len(not_target)]], noise_freq)
+        y_tr[i] = 0
 
     # Test data
     for i in range(train_size*10):
         test[i] = add_noise(nums[i % len(nums)], noise_freq)
-        y_te[i] = i % len(nums)
+        y_te[i] = 1 if i in num_target else 0
 
     np.random.seed(seed)
     tr_p = np.random.permutation(train_size)
@@ -119,25 +120,25 @@ def g_loss(w, X, ytr, p=0):
          Quasi-Newton BFGS
 """ 
 
-def nnet(Xtr, Ytr,lambda = 0.00, epsilon = 1.0e-06, kmax = 500, BLS_params, optimizer):
-    # init rand weights
-    w = rand_weights
+# def nnet(Xtr, Ytr,lambda = 0.00, epsilon = 1.0e-06, kmax = 500, BLS_params, optimizer):
+#     # init rand weights
+#     w = rand_weights
     
-    if optimizer == "GM": # Steepest descent
-        objective_func = loss(w, Xtr, Ytr, p = lambda)
-        GM(x, f, , BLS_params, eps = epsilon, kmax = kmax)
-        return 0
-    ##
-    elif optimizer == "CGM": # Conjugate Gradient method
+#     if optimizer == "GM": # Steepest descent
+#         objective_func = loss(w, Xtr, Ytr, p = lambda)
+#         GM(x, f, , BLS_params, eps = epsilon, kmax = kmax)
+#         return 0
+#     ##
+#     elif optimizer == "CGM": # Conjugate Gradient method
         
-        return 1
-    ##
-    elif optimizer == "BFGS": # Quasi-Newton BFGS
+#         return 1
+#     ##
+#     elif optimizer == "BFGS": # Quasi-Newton BFGS
         
-        return 2
-    ##
-    else:
-        print("Invalid optimizer.")
+#         return 2
+#     ##
+#     else:
+#         print("Invalid optimizer.")
         
     
 
