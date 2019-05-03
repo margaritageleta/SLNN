@@ -9,6 +9,7 @@ This file can also be used as a python module.
 
 import numpy as np
 import matplotlib.pyplot as plt
+from scipy.optimize.linesearch import line_search
 
 
 # -- Image utils --
@@ -25,6 +26,7 @@ nums = np.array([
     [0, 1, 1, 1, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 1, 1, 1, 0], #8
     [0, 1, 1, 1, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0]  #9
 ])
+
 
 def num_show(num):
     img_array = num.reshape((-1, 5))
@@ -85,6 +87,7 @@ def gen_data(seed, train_size, num_target, tr_freq, noise_freq):
 
 # -- SLNN --
 
+
 def sigmoid(x):
     return 1 / (1 + np.exp(-x))
 
@@ -96,14 +99,46 @@ def y(X, w):
 
 # -- Objective functions --
 
+
 def loss(w, X, ytr, p=0):
     return np.sum((y(X, w) - ytr)**2) + p/2 * np.sum(w**2)
 
 
 def g_loss(w, X, ytr, p=0):
-    return (2 * sigmoid(X) * ((y(X, w) - ytr) * y(X, w) * (1 - y(X, w))) + p*w).sum(axis=0)
+    return np.squeeze(2 * sigmoid(X.T) @ ((y(X, w) - ytr) * y(X, w) * (1 - y(X, w))) + p*w.T)
 
 # -- Optimization --
+
+
+def GM(x, f, g, eps, kmax):
+    k = 0
+    while np.linalg.norm(g(x)) > eps and k < kmax:
+        d = -g(x)
+        alpha, *_ = line_search(f, g, x, d)
+        x = x + alpha*d
+        k += 1
+
+    return x
+
+
+def BFGS(x, f, g, eps, kmax):
+    H = I = np.identity(len(g(x)))
+    k = 0
+    while np.linalg.norm(g(x)) > eps and k < kmax:
+        d = -H @ g(x)
+        alpha, *_ = line_search(f, g, x, d, c1 = 0.01, c2 = 0.45)
+        print(alpha)
+        if alpha is None:
+            return x
+        x, x_prev = x + alpha*d, x
+        s = x - x_prev
+        y = g(x) - g(x_prev)
+        y = y[None, :]
+        rho = 1 / ((y).T @ s)
+        H = (I - rho * s @ y.T) @ H @ (I - rho * y @ (s.T)) + rho * s @ s.T
+        k += 1
+    return x
+
 
 """
  BLS params:
