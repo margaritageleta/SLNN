@@ -77,7 +77,7 @@ def gen_data(seed, train_size, num_target, tr_freq, noise_freq):
     # Test data
     for i in range(train_size*10):
         test[i] = add_noise(nums[i % len(nums)], noise_freq)
-        y_te[i] = 1 if i in num_target else 0
+        y_te[i] = 1 if i % len(nums) in num_target else 0
 
     np.random.seed(seed)
     tr_p = np.random.permutation(train_size)
@@ -89,7 +89,7 @@ def gen_data(seed, train_size, num_target, tr_freq, noise_freq):
 
 
 def sigmoid(x):
-    return 1 / (1 + np.exp(-x))
+    return 1. / (1. + np.exp(-x))
 
 
 def y(X, w):
@@ -106,8 +106,8 @@ def loss(w, X, ytr, p=0):
 
 
 def g_loss(w, X, ytr, p=0):
-    return (2 * sigmoid(X) * ((y(X, w) - ytr) * y(X, w) * (1 - y(X, w))) + p*w).sum(axis=0)
-    #return np.squeeze(2 * sigmoid(X.T) @ ((y(X, w) - ytr) * y(X, w) * (1 - y(X, w))) + p*w.T)
+    #return (2 * sigmoid(X) * ((y(X, w) - ytr) * y(X, w) * (1 - y(X, w))) + p*w).sum(axis=0)
+    return np.squeeze(2 * sigmoid(X.T) @ ((y(X, w) - ytr) * y(X, w) * (1 - y(X, w))) + p*w.T)
 
 # -- Optimization --
 
