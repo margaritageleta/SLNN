@@ -31,12 +31,12 @@ def linesearch(f, g0, x0, d, alpham, c1, c2, maxiter, eps):
         fxx = f(xx)
         gxx = g(xx) @ d
 
-        if (fxx > fx0 + c1*alphax*gx0) or (i > 1 and fxx >= fxp):
+        if (fxx > fx0 + c1*alphax*gx0) or (i > 1 and fxx >= fxp):  # WC1
             alphas, iout_zoom = zoom(f, g, x0, d, alphap, alphax, c1, c2, eps)
             if iout_zoom == 2:
                 iout = 2
             return alphas, iout
-        if abs(gxx) <= -c2 * gx0:
+        if np.abs(gxx) <= -c2 * gx0:  # SWC
             alphas = alphax
             return alphas, iout
         if gxx >= 0:
@@ -75,7 +75,7 @@ def zoom(f, g, x0, d, alphal, alphah, c1, c2, eps):
         if (fxx > fx0 + c1*alphax*gx0) or (fxx >= fxl):
             alphah = alphax
         else:
-            if abs(gxx) <= -c2*gx0:
+            if np.abs(gxx) <= -c2*gx0:
                 alphas = alphax
                 return alphas, iout
             if gxx*(alphah - alphal) >= 0:
