@@ -102,7 +102,7 @@ def y(X, w):
 
 def loss(w, X, ytr, p=0):
     #return np.sum((y(X, w) - ytr)**2) + p/2 * np.sum(w**2)
-    return np.array([np.linalg.norm(y(X, w) - ytr)**2 + p/2 * np.linalg.norm(w)**2])
+    return np.linalg.norm(y(X, w) - ytr)**2 + p/2 * np.linalg.norm(w)**2
 
 
 def g_loss(w, X, ytr, p=0):
