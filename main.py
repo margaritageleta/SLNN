@@ -127,6 +127,7 @@ def GM(x, f, g, eps, kmax, precision=6):
         else:
             alpha, *_ = line_search(f, g, x, d, c1=0.01, c2=0.45)
         if alpha is None:
+            print("alpha not found (!)")
             break
         x, x_prev = x + alpha*d, x
         k += 1
@@ -156,6 +157,7 @@ def CGM(x, f, g, eps, kmax, iCG, iRC, nu=None, precision=6):
         else:
             alpha, *_ = line_search(f, g, x, d, c1=0.01, c2=0.45)
         if alpha is None:
+            print("alpha not found (!)")
             break
         x, x_prev = x + alpha*d, x
         # =========== #
@@ -203,6 +205,7 @@ def BFGS(x, f, g, eps, kmax, precision=6):
         else:
             alpha, *_ = line_search(f, g, x, d, c1=0.01, c2=0.45)
         if alpha is None:
+            print("alpha not found (!)")
             break
         x, x_prev = x + alpha*d, x
         s = x - x_prev
@@ -226,12 +229,26 @@ def BFGS(x, f, g, eps, kmax, precision=6):
 
 
 class SLNN:
+    """
+    Single layer neural network, with n inputs.
+    Methods:
+        train:      minimize the loss function for some given train set and its
+                    labels. The available optimizer methods are "GM", "CGM" and
+                    "BFGS".
+        cvtrain:    uses cross-validation to find the best regularization
+                    parameter, and trains the SLNN with it.
+        predict:    predicts the labels for some given data.
+        accuracy:   given some data set and its labels, computes the accuracy
+                    of the model.
+        summary:    prints a summary of the model and returns the iterations.
+    """
+
     def __init__(self, n=35):
         self.weights = np.zeros((1, 35))
         self._trained = False
         self.out = None
 
-    def train(self, optimizer, x, y, p = 0, epsilon=10e-6, kmax = 1000):
+    def train(self, optimizer, x, y, p=0, epsilon=10e-6, kmax=1000):
         if optimizer == "GM":
             self.weights, self.out = GM(self.weights, lambda w: loss(w, x, y, p), lambda w: g_loss(w, x, y, p), epsilon, kmax)
         elif optimizer == "CGM":
