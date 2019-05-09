@@ -157,7 +157,6 @@ def CGM(x, f, g, eps, kmax, iCG, iRC, nu=None, precision=6):
         else:
             alpha, *_ = line_search(f, g, x, d, c1=0.01, c2=0.45)
         if alpha is None:
-            print("alpha not found (!)")
             break
         x, x_prev = x + alpha*d, x
         # =========== #
@@ -205,7 +204,6 @@ def BFGS(x, f, g, eps, kmax, precision=6):
         else:
             alpha, *_ = line_search(f, g, x, d, c1=0.01, c2=0.45)
         if alpha is None:
-            print("alpha not found (!)")
             break
         x, x_prev = x + alpha*d, x
         s = x - x_prev
