@@ -88,7 +88,6 @@ def gen_data(seed, train_size, num_target, tr_freq, noise_freq):
 
 # -- SLNN --
 
-
 def sigmoid(x):
     return 1. / (1. + np.exp(-x))
 
@@ -225,7 +224,6 @@ def BFGS(x, f, g, eps, kmax, precision=6):
 
 # -- SLNN class --
 
-
 class SLNN:
     """
     Single layer neural network, with n inputs.
@@ -301,3 +299,12 @@ class SLNN:
             print("-"*75)
             num_show(self.weights)
             return self.out
+
+# -- Utility --       
+       
+def show_less(data):
+    if len(data) < 10:
+        return data
+    data_out = data.head(5)
+    data_out = data_out.append(data.tail(5))
+    return data_out
